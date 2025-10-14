@@ -17,7 +17,9 @@ nav = {
     'pubs': {"name": "Publications",
              'desc':''},
     'recipes': {"name": "Recipes",
-             'desc':'Some food I like to cook'}
+                'desc':'Some food I like to cook'},
+    'erdos': {"name": "Erdős Number",
+              'desc':'How many papers to get me to Paul Erdős'}
 }
 
 

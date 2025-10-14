@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+  <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{title}}</h1>
+        <p>{{description}}</p>
+	
+
+<h3>My Erdős' number is 4</h3>
+
+<ul>
+<li>0. <a href="http://www.oakland.edu/enp">Paul Erdős</a>
+<li>1. Nick Wormald
+<li>2. <a href="http://ww2.cs.mu.oz.au/~alistair/">Alistair Moffat</a>
+<li>3. <a href="http://ww2.cs.mu.oz.au/~tim/">Timothy Baldwin</a>
+<li>4. Emily M. Bender
+</ul>
+
+
+	<p>But it could be lower:</p>
+	  
+<a href='https://www.xkcd.com/599/'><img src='https://imgs.xkcd.com/comics/apocalypse.png'></a>
+
+	<p>Apocalypse (XKCD)
+
+{% endblock %}
