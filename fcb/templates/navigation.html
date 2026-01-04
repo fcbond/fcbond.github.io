@@ -1,19 +1,31 @@
 <header>
-  <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a href="/" class="navbar-brand">FCB</a>
-        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav">
-	      {% for pg in nav %}
-	      <a href="{{ url_for('show', page=pg) }}"
-		 class="nav-item nav-link{% if page == pg %} active{%
-		 endif %}">{{ nav[pg]['name'] }}</a>
-	      {% endfor %}
-	    </div>
-	</div>
+  <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark py-1">
+    <div class="container">
+      <a href="/" class="navbar-brand me-2">FCB</a>
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarCollapse"
+        aria-controls="navbarCollapse"
+        aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <!-- no ms-auto here -->
+        <div class="navbar-nav gap-2">
+          {% for pg in nav %}
+            <a
+              href="{{ url_for('show', page=pg) }}"
+              class="nav-link{% if page == pg %} active{% endif %}"
+              {% if page == pg %} aria-current="page"{% endif %}
+            >{{ nav[pg]['name'] }}</a>
+          {% endfor %}
+        </div>
       </div>
+    </div>
   </nav>
 </header>
