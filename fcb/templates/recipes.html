@@ -4,44 +4,77 @@
   <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet">
 {% endblock %}
 
-{% block content %}
-    <div class="container">
-        <h1>{{title}}</h1>
-        <p>{{description}}</p>
-	
-<ul>
-  <li>Main dishes
+  {% block content %}
+{% macro ingredients_header() -%}
+  <div class="d-flex flex-wrap align-items-center gap-2 mt-3 mb-2 recipe-scale">
+    <h4 class="mb-0 me-2">Ingredients</h4>
+
+    <div class="input-group input-group-sm" style="max-width: 170px;">
+      <span class="input-group-text">×</span>
+      <input
+        type="number"
+        class="form-control scaleFactor"
+        value="1"
+        min="0.1"
+        step="0.1">
+    </div>
+
+    <div class="btn-group btn-group-sm" role="group" aria-label="Quick scale">
+      <button type="button" class="btn btn-outline-secondary scale-btn" data-scale="0.5">0.5×</button>
+      <button type="button" class="btn btn-outline-secondary scale-btn" data-scale="1">1×</button>
+      <button type="button" class="btn btn-outline-secondary scale-btn" data-scale="2">2×</button>
+      <button type="button" class="btn btn-outline-secondary scale-btn" data-scale="3">3×</button>
+    </div>
+  </div>
+{%- endmacro %}
+
+
+  
+<div class="container">
+  <h1>{{title}}</h1>
+  <p>{{description}}</p>
+
+  <!-- TOC (not scaled) -->
+  <ul>
+    <li>Main dishes
       <ul>
-	<li><a href="#spare-ribs">Pork Spare Ribs in BBQ Sauce</a>
-	<li><a href="#kalbi-chim">Kalbi Chim (Korean steamed beef
-	ribs)</a>
-	<li><a href="#farfollini">Farfalloni con Funghi (Bowties and
-	Mushrooms)</a>
-        <li><a href="#baked-beans">Baked Beans</a>
+        <li><a href="#spare-ribs">Pork Spare Ribs in BBQ Sauce</a></li>
+        <li><a href="#kalbi-chim">Kalbi Chim (Korean steamed beef ribs)</a></li>
+        <li><a href="#farfollini">Farfalloni con Funghi (Bowties and Mushrooms)</a></li>
+        <li><a href="#baked-beans">Baked Beans</a></li>
       </ul>
-  <li>Desserts
+    </li>
+    <li>Breakfast
       <ul>
-	<li><a href="#kentish-cake">Kentish Cake</a>
-	<li><a href="#scones">Sultana Tea Scones</a>
-	<li><a href="#pavlova">Classic Pavlova</a>
+        <li><a href="#porridge">Porridge (with dates and tahini)</a></li>
       </ul>
-</ul>
+    </li>
+    <li>Desserts
+      <ul>
+        <li><a href="#kentish-cake">Kentish Cake</a></li>
+        <li><a href="#scones">Sultana Tea Scones</a></li>
+        <li><a href="#pavlova">Classic Pavlova</a></li>
+      </ul>
+    </li>
+  </ul>
 
+  <h3 id="spare-ribs">Pork Spare Ribs in BBQ Sauce</h3>
 
-<H3><a name="spare-ribs">Pork Spare Ribs in BBQ Sauce</a></H3>
+  {{ ingredients_header() }}
+  <p> For 4-5 people.</p>
+  <ul class="ingredients">
+    <li>500.0 g pork spare ribs (the thin ones are best)</li>
+    <li>2 sweet potatoes</li>
+    <li>2 large onions</li>
+    <li>6 cloves garlic</li>
+    <li>3 tbsp brown sugar</li>
+    <li>3 tbsp vinegar</li>
+    <li>1 tbsp mustard powder</li>
+    <li>2 tbsp Worcestershire sauce</li>
+    <li>1 tbsp tomato purée</li>
+    <li>800.0 g canned tomatoes (two cans or 1000.0 g fresh tomatoes)</li>
+  </ul>
 
-<ul>
-  <li> pork spare ribs - 500 gm - the thin ones are best 
-  <li> 2 sweet potatoes
-  <li> 2 large onions
-  <li> 6 cloves of garlic
-  <li> 3 tb brown sugar
-  <li> 3 tb vinegar  (doesn't matter which kind - cheap and strong)
-  <li> 1 tb mustard powder (maybe you could substitute chilli if nec)
-  <li> 2 tb worcestershire sauce
-  <li> 1 tb tomato puree
-  <li> Tomatoes - 800gm tin or approx 1 kg fresh
-</ul>
 <ol>
   <li> Put meat in baking tin without any oil.  Bake at 200C for 20-30
       min.  Pour off the fat that has come off the meat. 
@@ -69,22 +102,25 @@ the sauce up, and you might need to increase the cooking time a
 little.  The meat should be soft and coming off the bones.  
 </ol>
 
-<H3><a name="kalbi-chim">Kalbi Chim (Korean steamed beef ribs)</a></H3>
 
-<ul>
-  <li> Beef ribs - 1000 gm - slice through the ribs, in thin slices
-  <li> 1.5 cup water
-  <li> 6 tb sugar (brown or white)
-  <li> 1 tb rice-wine (sake)
-  <li> 6 tb soy sauce
-  <li> 2 tb sesame
-  <li> 1 tb sesame oil
-  <li> 0.5 large onion (grated)
-  <li> 5 tb spring onions (chopped)
-  <li> 2 pieces dark chocolate (melted)
-  <li> 6 cloves of garlic
-  <li> salt and pepper to taste    
-</ul>
+  <h3 id="kalbi-chim">Kalbi Chim (Korean steamed beef ribs)</h3>
+
+  <p> Serves 5-6 people.</p>
+  {{ ingredients_header() }}
+  <ul class="ingredients">
+    <li>1000.0 g beef ribs (slice through the ribs, in thin slices)</li>
+    <li>1.5 cup water</li>
+    <li>6 tbsp sugar(brown or white)</li>
+    <li>1 tbsp rice wine (sake)</li>
+    <li>6 tbsp soy sauce</li>
+    <li>2 tbsp sesame seeds</li>
+    <li>1 tbsp sesame oil</li>
+    <li>0.5 large onion (grated)</li>
+    <li>5 tbsp spring onions (chopped)</li>
+    <li>2 pieces dark chocolate (melted)</li>
+    <li>6 cloves garlic</li>
+    <li>salt and pepper to taste</li>
+  </ul>
 
 <ol>
   <li> Soak the ribs in cold water to remove the blood:  leave in
@@ -94,7 +130,7 @@ little.  The meat should be soft and coming off the bones.
       mix, and pour over the meat.
   <li> Simmer for more than one hour (maybe even two), until the meast
       is very tender and the sauce has thickened.
-  <li> Serve with rice and kimchee.  Serves 5-6 people.   If you have
+  <li> Serve with rice and kimchee.  If you have
       more, just multiply the sauce up, and you might need to increase
       the cooking time a little.   
   <li> If you have some leftovers, try mixing the rice in with the
@@ -102,24 +138,29 @@ little.  The meat should be soft and coming off the bones.
 </ol>
 
 
-<h3><a name="farfollini">Farfalloni con Funghi (Bowties and Mushrooms)</h3>
-<ul>
-   <li> 40 g    butter
-   <li> 400 g   fresh mushrooms (whole if small, sliced if large)
-   <li> 2 tbsp  oil
-   <li> 400 g   minced pork
-   <li> 1-2 cloves garlic, crushed
-   <li> 1/2 tsp dried basil
-   <li> 1/2 tsp dried oregano
-   <li>         salt & pepper
-   <li> 100 ml  white wine (red wine is also good)
-   <li> 2 tbsp  flour
-   <li> 3 tbsp  tomato puree
-   <li> 200 ml  beef stock
-   <li> 300 g   farfalloni (bow tie pasta)
-   <li>         freshly grated parmesan cheese
-</ul>
-<ol>
+  
+  <h3 id="farfollini">Farfalloni con Funghi (Bowties and Mushrooms)</h3>
+
+  {{ ingredients_header() }}
+  <p>For 4 people</p>
+  <ul class="ingredients">
+    <li>40 g butter</li>
+    <li>400 g mushrooms</li>
+    <li>2 tbsp oil</li>
+    <li>400 g minced pork</li>
+    <li>1–2 cloves garlic (crushed)</li>
+    <li>0.5 tsp dried basil</li>
+    <li>0.5 tsp dried oregano</li>
+    <li>salt and pepper (to taste)</li>
+    <li>100.0 ml wine</li>
+    <li>2 tbsp flour</li>
+    <li>3 tbsp tomato purée</li>
+    <li>200 ml beef stock</li>
+    <li>300 g farfalloni</li>
+    <li>freshly grated parmesan cheese</li>
+  </ul>
+
+  <ol>
 <li>  In a saucepan melt the butter over medium heat and  saute the
     mushrooms until cooked.  Set aside.
 
@@ -148,30 +189,26 @@ is cooking.  The sauce is also good with egg noodles of any width.</p>
 
 <p>Adapted from <i>Pasta! Pasta! Pasta!</i> by Ursel Norman.</p>
 
+<h3 id="baked-beans">Baked Beans</h3>
 
-<h3><a name="baked-beans">Baked Beans</h3>
-
-<ul>
-  <li>500g dry white beans  (best = canellini or haricot; okay = lima or black-eye beans)
-  <li>1  onion</li>
-  <li>2 cloves</li>
-</ul>
-<ul>
-  <li>4 thick slices smokey  bacon OR speck OR kaiserfleish (ordinary bacon works okay too)
-  <li>1 onion</li>
-  <li>400g tomatoes</li>
-  <li>1 tbsp brown 
-  sugar</li>
-  <li>4 tbsps maple 
-  syrup</li>
-  <li>2 tbsps Worcestershire 
-  sauce</li>
-  <li>1 tsp salt</li>
-  <li>½ tsp pepper</li>
-  <li>1 bay leaf</li>
-  <li>1 cup water</li>
-</ul>
-
+  <p>Serves 5-6 as main (with bread), 8-10 as side</p>
+  {{ ingredients_header() }}
+  <ul class="ingredients">
+    <li>500.0 g dry white beans</li>
+    <li>1 onion</li>
+    <li>2 cloves</li>
+    <li>4 slices smoky bacon</li>
+    <li>1 onion</li>
+    <li>400.0 g tomatoes</li>
+    <li>1 tbsp brown sugar</li>
+    <li>4 tbsp maple syrup (or less)</li>
+    <li>2 tbsp Worcestershire sauce</li>
+    <li>1 tbsp apple cider vinegar (optional)</li>
+    <li>1 tsp salt</li>
+    <li>0.tsp pepper</li>
+    <li>1 bay leaf</li>
+    <li>1 cup water</li>
+  </ul>
 <ul>
 <li><b>Day 1</b>
 <ol>
@@ -195,23 +232,39 @@ is cooking.  The sauce is also good with egg noodles of any width.</p>
   bake 20 min uncovered, until the top glazes slightly.  </li>
 </ol>
 </ul>
-<p>Adapted from Jill Dupleix's <i>Old Food</i> by Helena Bond.
+<p>Adapted from Jill Dupleix's <i>Old Food</i> by Helena Bond, slight tweaks by Francis Bond.
 
+  <h3 id="porridge">Porridge with Dates and Tahini</h3>
+<p>Serves 2</p>
+  {{ ingredients_header() }}
+  <ul class="ingredients">
+    <li>400.0 ml oat milk</li>
+    <li>5.0 tbsp rolled oats</li>
+    <li>1.5 tbsp chia seeds</li>
+    <li>4 dates</li>
+    <li>1 tbsp tahini</li>
+  </ul>
+<ol>
+  <li>Place milk, salt, oats and chia seeds in a pot, bring to boil
+  <li>Turn heat down and add dates, simmer for 5 minutes total, stirring occasionally, adding the tahini after 3 minutes
+  <li>Serve with cream and nuts (almonds, walnuts, pistachios)
+</ol>
+  
+ <p>Adapted from <i>The fast 800</i> by Michael Mosely (2019. p174) 
 
-<H3><a name="kentish-cake">Kentish Cake</a></H3>
-<ul>
-  <li> 125 gm butter/marg
-  <li> 3/4 cup sugar
-  <li> 1 cup self raising flour
-  <br> or 1 cup plain flour and 1 tsp baking powder
-  <li> pinch salt
-  <li> 2 tbsp coconut (shredded)
-  <li> 2 tbsp cocoa
-  <li> 2 eggs (large)
-  <li> 1/2 cup chopped nuts, cherries & sultanas combined
-  <li> 1/4 cup milk
-  <li> vanilla
-</ul>
+  <h3 id="kentish-cake">Kentish Cake</h3>
+
+  {{ ingredients_header() }}
+  <ul class="ingredients">
+    <li>125 g butter</li>
+    <li>0.75 cup sugar</li>
+    <li>1 cup self-raising flour (or 1 tsp baking powder per cup of plain flour )</li>
+    <li>2 tbsp coconut</li>
+    <li>1 tbsp cocoa</li>
+    <li>0.5 cup chopped nuts and sultanas combined
+    <li>2 eggs</li>
+    <li>0.25 cup milk</li>
+  </ul>
 <ol>	
   <li>Cream butter and sugar, add eggs one by one and beat well after each 
 addition.  Mix in vanilla, then coconut and sifted flour and cocoa 
@@ -222,20 +275,24 @@ papered and bake at 200C until a skewer inserted comes out clean.
 (about 30 minutes)
 </ol>
 
-<h3><a name="scones">Sultana Tea Scones</a></h3>
+ <p>From a recipe book from my primary school (Payne Road): cups are Australian (250 ml)</p>
+ 
+  <h3 id="scones">Sultana Tea Scones</h3>
 
-<ul>
-  <li>4 oz plain flour
-  <li>1 oz magarine/butter
-  <li>1 oz sultanas
-  <li>1 level tsp baking powder
-  <li>1 oz castor sugar
-  <li>4 tablespoons milk
-</ul>
+  {{ ingredients_header() }}
+  <ul class="ingredients">
+    <li>0.5 cup  plain flour</li>
+    <li>2 tbsp butter</li>
+    <li>2 tbsp sultanas</li>
+    <li>1 tsp baking powder</li>
+    <li>2 tbsp caster sugar</li>
+    <li>4 tbsp milk</li>
+  </ul>
 
+  
 <ol>
   <li> Grease the baking sheet
-  <li> Sift plain flour with baking powder & castor sugar into mixing bowl
+  <li> Sift plain flour with baking powder & caster sugar into mixing bowl
   <li> Cut butter into small pieces and rub into flour with fingers
   <li> Put sultanas into sieve with a little flour and shake.
   <li> Add sultanas to rubbed flour
@@ -245,22 +302,25 @@ papered and bake at 200C until a skewer inserted comes out clean.
   <li> Sprinkle the table top lightly with flour and pat out the dough
       to a circle 1/2inch thick. Cut into triangles (or circles).
   <li> Put the scones on the greased baking sheet and bake in the top
-      half of the oven for 5 - minutes.  If they are not cooked right
+      half of the oven for 5 - 10 minutes.  If they are not cooked right
       through, try at a lower temperature for longer (there is a lot
       of variation between ovens).
   <li> Serve hot or cold with butter and jam.
 </ol>
 
-<H3><a name="pavlova">Classic Pavlova</a></H3>
-<ul>
-  <li> 3 egg whites
-  <li> pinch salt
-  <li> 3/4 cup castor sugar  ie light, highly refined sugar, 
-  <li> 1/4 cup granulated sugar
-  <li> 1 tb cornflour
-  <li> 1 tp vinegar or lemon juice
-</ul>
-<ol>
+
+  <h3 id="pavlova">Classic Pavlova</h3>
+
+  {{ ingredients_header() }}
+  <ul class="ingredients">
+    <li>3 egg whites</li>
+    <li>0.75 cup caster sugar</li>
+    <li>0.25 cup granulated sugar</li>
+    <li>1 tbsp cornflour</li>
+    <li>1 tsp vinegar or lemon juice</li>
+  </ul>
+
+ <ol>
   <li>Beat egg whites and salt till stiff.  Beat in the castor sugar a 
 little at a time until the mixture is stiff and shiny.
 
@@ -274,5 +334,113 @@ a greased biscuit tin,  Dust with cornflour.
 tray. Pipe the rest of the mixture in shells or swirls around the
 edge.  Bake in a slow oven (about 120 - 150C) for about 30 - 40
 minutes.  This pavlova has a soft centre and a crisp exterior.
-</ol>
+</ol> 
+
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+(function($){
+
+  function formatNumber(n) {
+    const rounded = Math.round(n * 10) / 10;
+    if (Math.abs(rounded - Math.round(rounded)) < 1e-9) return String(Math.round(rounded));
+    return String(rounded.toFixed(1)).replace(/\.0$/, '');
+  }
+
+  function parseLeadingQuantity(text) {
+    let t = (text || '').trim();
+
+    // range like "1.0–2.0 cloves ..."
+    let m = t.match(/^(\d+(?:\.\d+)?)\s*[–-]\s*(\d+(?:\.\d+)?)\s+(.*)$/);
+    if (m) return { type: 'range', a: parseFloat(m[1]), b: parseFloat(m[2]), rest: m[3] };
+
+    // single like "500.0 g ..."
+    m = t.match(/^(\d+(?:\.\d+)?)\s+(.*)$/);
+    if (!m) return null;
+    return { type: 'single', a: parseFloat(m[1]), rest: m[2] };
+  }
+
+  function splitUnit(rest) {
+    const m = (rest || '').trim().match(/^([^\s]+)\s*(.*)$/);
+    if (!m) return { unit: '', tail: '' };
+    return { unit: m[1], tail: m[2] || '' };
+  }
+
+  function initScaling() {
+    const $lis = $('.ingredients li');
+    if ($lis.length === 0) {
+      console.warn("Recipe scaler: found 0 '.ingredients li' elements. Did you add class='ingredients' to the ULs?");
+    }
+
+    $lis.each(function(){
+      const $li = $(this);
+      if ($li.data('scaledInit')) return;
+
+      const original = $li.text();
+      const parsed = parseLeadingQuantity(original);
+      if (!parsed) return;
+
+      const { unit, tail } = splitUnit(parsed.rest);
+
+      if (parsed.type === 'single') {
+        const base = parsed.a;
+        $li.html(
+          `<span class="scaled-qty" data-kind="single" data-base="${base}">${formatNumber(base)}</span>` +
+          ` ${unit}${tail ? ' ' + tail : ''}`
+        );
+      } else {
+        const a = parsed.a, b = parsed.b;
+        $li.html(
+          `<span class="scaled-qty" data-kind="range" data-basemin="${a}" data-basemax="${b}">${formatNumber(a)}–${formatNumber(b)}</span>` +
+          ` ${unit}${tail ? ' ' + tail : ''}`
+        );
+      }
+
+      $li.data('scaledInit', true);
+    });
+  }
+
+  function applyScale(factor) {
+    factor = parseFloat(factor);
+    if (!isFinite(factor) || factor <= 0) return;
+
+    $('.scaled-qty').each(function(){
+      const $s = $(this);
+      const kind = $s.data('kind');
+
+      if (kind === 'single') {
+        const base = parseFloat($s.data('base'));
+        $s.text(formatNumber(base * factor));
+      } else {
+        const baseMin = parseFloat($s.data('basemin'));
+        const baseMax = parseFloat($s.data('basemax'));
+        $s.text(`${formatNumber(baseMin * factor)}–${formatNumber(baseMax * factor)}`);
+      }
+    });
+  }
+
+  function setAllScales(factor) {
+    $('.scaleFactor').val(factor);
+    applyScale(factor);
+  }
+
+  $(function(){
+    initScaling();
+
+    const initial = $('.scaleFactor').first().val() || 1;
+    setAllScales(initial);
+
+    $(document).on('input change', '.scaleFactor', function(){
+      setAllScales(this.value);
+    });
+
+    $(document).on('click', '.scale-btn', function(){
+      setAllScales($(this).data('scale'));
+    });
+  });
+
+})(jQuery);
+</script>
 {% endblock %}
