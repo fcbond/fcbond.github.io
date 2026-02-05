@@ -1,5 +1,5 @@
 """App entry point."""
-from fcb import create_app
+from web import create_app
 
 app = create_app()
 

@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_frozen import Freezer
-from fcb import create_app
+from web import create_app
 
 app = create_app()
 app.config.from_pyfile('settings.py')
