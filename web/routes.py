@@ -1,6 +1,16 @@
 """Route declaration."""
+import os
 from flask import current_app as app
 from flask import render_template
+from .bib2html import load_bibliography, render_bibliography
+
+# Load and render bibliography once at startup
+_BIB_DIR = os.path.join(os.path.dirname(__file__), 'static', 'bib')
+_BIB_ENTRIES = load_bibliography(
+    os.path.join(_BIB_DIR, 'abb.bib'),
+    os.path.join(_BIB_DIR, 'mtg.bib'),
+)
+_BIB_HTML = render_bibliography(_BIB_ENTRIES, author_filter='Bond')
 
 
 # nav = [
@@ -24,6 +34,18 @@ nav = {
 
 
 
+
+@app.route("/pubs.html")
+def pubs():
+    """Publications page (generated from BibTeX)."""
+    return render_template(
+        'pubs.html',
+        page='pubs',
+        nav=nav,
+        title=nav['pubs']['name'],
+        description=nav['pubs']['desc'],
+        bib_html=_BIB_HTML,
+    )
 
 @app.route("/<page>.html")
 def show(page):

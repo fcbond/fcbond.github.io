@@ -1,2 +1,3 @@
 frozen-flask
 Flask
+bibtexparser>=2.0.0b7

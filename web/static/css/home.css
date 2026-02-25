@@ -1,1 +1,67 @@
+/* Bibliography styles */
 
+.bib-nav {
+  text-align: center;
+  line-height: 2;
+  color: #555;
+}
+
+.bib-nav a {
+  color: #1a5276;
+  text-decoration: none;
+}
+
+.bib-nav a:hover {
+  text-decoration: underline;
+}
+
+.bib-section {
+  margin-bottom: 1.5rem;
+}
+
+/* Offset anchor jumps so the heading clears the fixed navbar */
+.bib-section h3 {
+  scroll-margin-top: 6rem;
+}
+
+.bib-entry {
+  margin-bottom: 0.9em;
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+}
+
+/* Authors + year: normal weight, flows inline */
+.bib-meta {
+  font-weight: normal;
+}
+
+/* Title: one step larger, semibold, not italic, flows inline after author/year */
+.bib-title,
+a.bib-title {
+  font-size: 1.1em;
+  font-style: normal;
+  font-weight: 500;
+}
+
+a.bib-title {
+  color: #1a5276;
+  text-decoration: none;
+}
+
+a.bib-title:hover {
+  text-decoration: underline;
+}
+
+/* Venue: normal size, flows inline after title */
+.bib-venue {
+  font-weight: normal;
+}
+
+/* Quieter link colour throughout the bibliography */
+.bib-entry a {
+  color: #1a5276;
+}
+
+.bib-entry a:hover {
+  color: #154360;
+}
