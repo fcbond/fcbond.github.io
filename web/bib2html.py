@@ -169,6 +169,26 @@ def _doi_link(doi: str) -> str:
 # 4.  Venue rendering per entry type
 # ---------------------------------------------------------------------------
 
+def _isbn_html(entry: dict) -> str:
+    """Build a compact ISBN display string for book-like entries."""
+    parts = []
+    isbn13 = _get(entry, 'isbn13') or (_get(entry, 'isbn') if len(_get(entry, 'isbn')) == 17 else '')
+    isbn10 = _get(entry, 'isbn10') or (_get(entry, 'isbn') if len(_get(entry, 'isbn')) == 10 else '')
+    eisbn13 = _get(entry, 'eisbn13', 'eisbn')
+    if isbn13:
+        parts.append(f'ISBN-13:&nbsp;{isbn13}')
+    if isbn10:
+        parts.append(f'ISBN-10:&nbsp;{isbn10}')
+    if eisbn13:
+        parts.append(f'eISBN-13:&nbsp;{eisbn13}')
+    # fallback: if only a plain isbn field and neither above matched
+    if not parts:
+        plain = _get(entry, 'isbn')
+        if plain:
+            parts.append(f'ISBN:&nbsp;{plain}')
+    return '; '.join(parts)
+
+
 def _venue_html(entry: dict) -> str:
     """Build the venue/source HTML for one entry."""
     etype     = entry.get('_type', '')
@@ -182,10 +202,10 @@ def _venue_html(entry: dict) -> str:
     volume    = _get(entry, 'volume')
     number    = _get(entry, 'number')
     address   = _get(entry, 'address')
-    isbn      = _get(entry, 'isbn')
     note      = _get(entry, 'note')
     editor    = _get(entry, 'editor')
     pages     = _pages(entry)
+    isbn_str  = _isbn_html(entry)
 
     venue = ''
 
@@ -216,8 +236,8 @@ def _venue_html(entry: dict) -> str:
             parts.append(publisher)
         if address:
             parts.append(address)
-        if isbn:
-            parts.append(f'ISBN {isbn}')
+        if isbn_str:
+            parts.append(isbn_str)
         venue = '. '.join(parts)
 
     elif etype in ('incollection', 'inbook'):
@@ -253,8 +273,8 @@ def _venue_html(entry: dict) -> str:
             parts.append(publisher)
         if address:
             parts.append(address)
-        if isbn:
-            parts.append(f'ISBN {isbn}')
+        if isbn_str:
+            parts.append(isbn_str)
         venue = ', '.join(parts)
 
     else:  # unpublished, misc, …
