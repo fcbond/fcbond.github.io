@@ -329,9 +329,11 @@ def _venue_html(entry: dict) -> str:
         sep = '. ' if venue and not venue.endswith('.') else (' ' if venue else '')
         venue = venue + sep + '; '.join(links)
 
-    # Append note if not already incorporated
+    # Append note if not already incorporated; add parens only if note
+    # doesn't already start with '(' (some notes carry their own brackets)
     if note and note not in venue:
-        venue += f' ({note})'
+        wrapped = note if note.startswith('(') else f'({note})'
+        venue += f' {wrapped}'
 
     return venue.strip()
 
@@ -406,6 +408,9 @@ def render_bibliography(
         ]
     else:
         visible = list(entries)
+
+    # Drop draft entries
+    visible = [e for e in visible if _get(e, 'year').lower() != 'draft']
 
     # Group by year
     by_year: dict[str, list[dict]] = defaultdict(list)
