@@ -9,6 +9,7 @@ _BIB_DIR = os.path.join(os.path.dirname(__file__), 'static', 'bib')
 _BIB_ENTRIES = load_bibliography(
     os.path.join(_BIB_DIR, 'abb.bib'),
     os.path.join(_BIB_DIR, 'mtg.bib'),
+    os.path.join(_BIB_DIR, 'talks.bib'),
 )
 _BIB_HTML = render_bibliography(_BIB_ENTRIES, author_filter='Bond')
 

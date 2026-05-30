@@ -43,6 +43,25 @@ from bibtexparser.middlewares import (
 
 
 # ---------------------------------------------------------------------------
+# 0.  Constants
+# ---------------------------------------------------------------------------
+
+# type field values used in talks.bib
+TALK_TYPES = frozenset({
+    'keynote', 'invited', 'seminar', 'panel', 'webinar', 'tv', 'presentation',
+})
+
+# URL substrings that indicate a video recording
+_VIDEO_PATTERNS = (
+    'youtube.com',
+    'youtu.be',
+    'facebook.com/watch',
+    'facebook.com/videos',
+    'channelnewsasia.com/news/video-on-demand',
+)
+
+
+# ---------------------------------------------------------------------------
 # 1.  Loading
 # ---------------------------------------------------------------------------
 
@@ -144,12 +163,22 @@ def _get(entry: dict, *keys: str, default: str = '') -> str:
     return default
 
 
+def _live_url(entry: dict) -> str:
+    """Return the url field. Broken URLs are stored as XXXurl and ignored."""
+    return _get(entry, 'url')
+
+
 def _pages(entry: dict) -> str:
     p = _get(entry, 'pages')
     if not p:
         return ''
     p = re.sub(r'\s*-{1,2}\s*', '–', p)
     return f'pp.&nbsp;{p}'
+
+
+def _is_video_url(url: str) -> bool:
+    """Return True when the URL points to a video recording."""
+    return any(p in url for p in _VIDEO_PATTERNS)
 
 
 def _doi_link(doi: str) -> str:
@@ -192,7 +221,7 @@ def _isbn_html(entry: dict) -> str:
 def _venue_html(entry: dict) -> str:
     """Build the venue/source HTML for one entry."""
     etype     = entry.get('_type', '')
-    url       = _get(entry, 'url')
+    url       = _live_url(entry)
     doi       = _get(entry, 'doi')
     booktitle = _get(entry, 'booktitle')
     journal   = _get(entry, 'journal')
@@ -277,7 +306,11 @@ def _venue_html(entry: dict) -> str:
             parts.append(isbn_str)
         venue = ', '.join(parts)
 
-    else:  # unpublished, misc, …
+    elif etype in ('misc',):
+        howpublished = _get(entry, 'howpublished')
+        venue = howpublished or note or ''
+
+    else:  # unpublished, …
         venue = note or ''
 
     # Append links
@@ -285,6 +318,8 @@ def _venue_html(entry: dict) -> str:
     if url:
         if 'aclanthology' in url or 'aclweb.org/anthology' in url:
             links.append(f'<a href="{url}">ACL Anthology</a>')
+        elif _is_video_url(url):
+            links.append(f'<a href="{url}">▶ Video</a>')
         else:
             links.append(f'<a href="{url}">{url}</a>')
     if doi:
@@ -307,29 +342,35 @@ def _venue_html(entry: dict) -> str:
 
 def _render_entry(entry: dict) -> str:
     """Render a single bib entry as a styled <div>."""
-    key    = entry.get('_key', '')
-    year   = _get(entry, 'year')
-    title  = _get(entry, 'title')
-    url    = _get(entry, 'url')
-    author = _get(entry, 'author')
-    editor = _get(entry, 'editor')
+    key       = entry.get('_key', '')
+    etype     = entry.get('_type', '')
+    year      = _get(entry, 'year')
+    title     = _get(entry, 'title')
+    url       = _live_url(entry)
+    author    = _get(entry, 'author')
+    editor    = _get(entry, 'editor')
+    talk_type = _get(entry, 'type').lower()
+
+    is_talk = etype == 'misc' and talk_type in TALK_TYPES
 
     # Person line: prefer author, fall back to editor
     person_raw = author or editor
     role_suffix = ' (eds)' if (not author and editor) else ''
     person_str = (_format_name_list(person_raw) + role_suffix) if person_raw else 'Unknown'
 
-    # Title element: linked if URL present, slightly larger via CSS
-    if url:
-        title_el = f'<a class="bib-title" href="{url}">{title}</a>'
+    # Title element: for talks link only to non-video URLs; video link goes in venue
+    title_url = url if (url and not _is_video_url(url)) else None
+    if title_url:
+        title_el = f'<a class="bib-title" href="{title_url}">{title}</a>'
     else:
         title_el = f'<span class="bib-title">{title}</span>'
 
     id_attr = f' id="{key}"' if key else ''
+    extra_class = ' bib-talk' if is_talk else ''
     person_year = f'{person_str} ({year}).'
     venue = _venue_html(entry)
     return (
-        f'<div class="bib-entry"{id_attr}>\n'
+        f'<div class="bib-entry{extra_class}"{id_attr}>\n'
         f'  <span class="bib-meta">{person_year}</span>\n'
         f'  {title_el}.\n'
         + (f'  <span class="bib-venue">{venue}</span>\n' if venue else '')

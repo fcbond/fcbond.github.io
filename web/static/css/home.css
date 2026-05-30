@@ -65,3 +65,22 @@ a.bib-title:hover {
 .bib-entry a:hover {
   color: #154360;
 }
+
+/* Talk entries: microphone icon sits in the left-margin gutter (created
+   by .bib-entry's padding-left) via absolute positioning, so it never
+   touches the text flow. */
+.bib-talk {
+  position: relative;
+}
+
+.bib-talk::before {
+  font-family: "bootstrap-icons";
+  content: "\f48d";            /* bi-mic-fill */
+  color: #1a6b8a;
+  font-size: 0.8em;
+  position: absolute;
+  left: 0.15em;
+  top: 0.15em;
+  line-height: 1;
+}
+
