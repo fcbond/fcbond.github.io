@@ -91,13 +91,17 @@ def load_bibliography(*bib_paths: str) -> list[dict]:
             d[field.key.lower()] = str(field.value) if field.value is not None else ''
         entries.append(d)
 
-    # Resolve crossref fields: inherit missing fields from the parent entry
+    # Resolve crossref fields: inherit missing fields from the parent entry.
+    # Lookup is case-insensitive because bibtool lowercases entry keys but
+    # does not alter field values, so a crossref = {_GWC:2018} field won't
+    # match an entry keyed _gwc:2018 without the fold.
     entry_map = {e['_key']: e for e in entries}
+    entry_map_ci = {k.lower(): v for k, v in entry_map.items()}
     for e in entries:
         xref_key = e.get('crossref', '').strip()
         if not xref_key:
             continue
-        parent = entry_map.get(xref_key)
+        parent = entry_map.get(xref_key) or entry_map_ci.get(xref_key.lower())
         if not parent:
             continue
         for field, value in parent.items():
