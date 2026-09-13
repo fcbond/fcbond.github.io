@@ -353,6 +353,12 @@ def _venue_html(entry: dict) -> str:
 # 5.  Single-entry rendering
 # ---------------------------------------------------------------------------
 
+def _is_talk(entry: dict) -> bool:
+    """True for a talk: a @misc whose type is one of TALK_TYPES."""
+    return (entry.get('_type', '') == 'misc'
+            and _get(entry, 'type').lower() in TALK_TYPES)
+
+
 def _chapter_title(entry: dict) -> str:
     """
     Return the chapter field when it holds a chapter *title* rather than a
@@ -378,7 +384,7 @@ def _render_entry(entry: dict) -> str:
     editor    = _get(entry, 'editor')
     talk_type = _get(entry, 'type').lower()
 
-    is_talk = etype == 'misc' and talk_type in TALK_TYPES
+    is_talk = _is_talk(entry)
 
     # Person line: prefer author, fall back to editor
     person_raw = author or editor
@@ -451,6 +457,13 @@ def render_bibliography(
     for e in visible:
         year = _get(e, 'year', default='undated')
         by_year[year].append(e)
+
+    # Order within a year: publications first, then talks, each by citation
+    # key. Not by position in the .bib — file order there is constrained by
+    # BibTeX (a crossref target must follow the entries referencing it), and
+    # by which file an entry came from, neither of which should reach the page.
+    for entries_in_year in by_year.values():
+        entries_in_year.sort(key=lambda e: (_is_talk(e), e.get('_key', '')))
 
     years = sorted(
         by_year.keys(),
