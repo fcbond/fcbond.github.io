@@ -418,14 +418,12 @@
 @Book{		  baresova:bond:2026,
   address	= {Olomouc},
   author	= {Ivona Bare\v{s}ov\'{a} and Francis Bond},
-  checked	= {corrected: details from the publisher's {DOI} record
-		  (10.5507/ff.26.24465500). A second online {ISBN},
-		  978-80-244-6782-5, is also registered; which of the two
-		  online {ISBN}s is the {EPUB} and which the {PDF} is not
-		  stated there},
+  checked	= {clean: details from the publisher's {DOI} record
+		  (10.5507/ff.26.24465500); the two online {ISBN}s were
+		  identified as {PDF} and {EPUB} by the author},
   checked-date	= {2026-09-13},
   doi		= {10.5507/ff.26.24465500},
-  eisbn13	= {978-80-244-6551-7},
+  eisbn13	= {978-80-244-6551-7 (PDF); 978-80-244-6782-5 (EPUB)},
   isbn13	= {978-80-244-6550-0},
   lab		= {upol},
   publisher	= {Univerzita Palack\'{e}ho v Olomouci},
@@ -6673,9 +6671,13 @@
 }
 
 
-%% moved here: BibTeX requires a crossref target to follow the entry that
-%% references it (bond:paik:2011).  It was above that entry, so the crossref
-%% silently failed and every citation in the features deck came out undefined.
+@comment{_yoon:lee:2011 is deliberately last.  BibTeX requires a crossref
+  target to occur later in the file than any entry referencing it; this one
+  was above bond:paik:2011, so the crossref silently failed and every citation
+  in the features deck came out undefined.  `bibtool -s` moves it back to the
+  top and reintroduces the bug -- and strips this comment while doing so.
+  See the "BibTeX crossref ordering" section of CLAUDE.md.}
+
 @Book{		  _yoon:lee:2011,
   address	= {Seoul},
   booktitle	= {Recent Trends in Language and Knowledge Processing},
