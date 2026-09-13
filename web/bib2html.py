@@ -33,7 +33,7 @@ import re
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Optional
+from typing import Iterable, Optional
 
 import bibtexparser
 from bibtexparser.middlewares import (
@@ -47,6 +47,11 @@ from bibtexparser.middlewares import (
 # ---------------------------------------------------------------------------
 
 # type field values used in talks.bib
+# Fields that describe one specific entry rather than its container, and so
+# must not be inherited by a child through crossref. Tagging an edited volume
+# with lab={ntu} should not silently mark every paper published in it.
+NO_INHERIT = frozenset({'lab', 'checked', 'checked-date'})
+
 TALK_TYPES = frozenset({
     'keynote', 'invited', 'seminar', 'panel', 'webinar', 'tv', 'presentation',
 })
@@ -105,7 +110,7 @@ def load_bibliography(*bib_paths: str) -> list[dict]:
         if not parent:
             continue
         for field, value in parent.items():
-            if field.startswith('_'):
+            if field.startswith('_') or field in NO_INHERIT:
                 continue
             if not e.get(field):   # only fill in what the child is missing
                 e[field] = value
@@ -275,10 +280,12 @@ def _venue_html(entry: dict) -> str:
 
     elif etype in ('incollection', 'inbook'):
         parts = []
+        # With no explicit booktitle, the entry's own title is the book.
+        book = booktitle or (_get(entry, 'title') if _chapter_title(entry) else '')
         if editor:
             parts.append(f'In {_format_name_list(editor)} (ed.),')
-        if booktitle:
-            parts.append(f'<i>{booktitle}</i>')
+        if book:
+            parts.append(f'<i>{book}</i>' + (',' if publisher else ''))
         if publisher:
             parts.append(publisher)
         if pages:
@@ -346,12 +353,26 @@ def _venue_html(entry: dict) -> str:
 # 5.  Single-entry rendering
 # ---------------------------------------------------------------------------
 
+def _chapter_title(entry: dict) -> str:
+    """
+    Return the chapter field when it holds a chapter *title* rather than a
+    number. BibTeX defines `chapter` as a number, but it is widely used for
+    the title of the part being cited, and this bibliography does both.
+    """
+    if entry.get('_type', '') not in ('inbook', 'incollection'):
+        return ''
+    chapter = _get(entry, 'chapter').strip()
+    return '' if chapter.replace('.', '').isdigit() else chapter
+
+
 def _render_entry(entry: dict) -> str:
     """Render a single bib entry as a styled <div>."""
     key       = entry.get('_key', '')
     etype     = entry.get('_type', '')
     year      = _get(entry, 'year')
-    title     = _get(entry, 'title')
+    # In @InBook/@InCollection, `title` is the book and `chapter` the part
+    # being cited, so the chapter is what should head the entry.
+    title     = _chapter_title(entry) or _get(entry, 'title')
     url       = _live_url(entry)
     author    = _get(entry, 'author')
     editor    = _get(entry, 'editor')
@@ -391,6 +412,7 @@ def _render_entry(entry: dict) -> str:
 def render_bibliography(
     entries: list[dict],
     author_filter: Optional[str] = None,
+    lab_filter: Optional[Iterable[str]] = None,
 ) -> str:
     """
     Render a complete bibliography as an HTML fragment.
@@ -400,18 +422,26 @@ def render_bibliography(
     entries       : output of load_bibliography()
     author_filter : if given (e.g. 'Bond'), only include entries where this
                     string appears in the author or editor field.
+    lab_filter    : if given (e.g. ('ntu', 'upol')), only include entries whose
+                    lab field is one of these values. A bare string is treated
+                    as a single value. Used for lab sites, where membership is
+                    recorded per entry rather than inferred from the authors.
 
     Returns
     -------
     HTML string ready to embed in a Jinja2 template with {{ bib_html | safe }}.
     """
+    visible = list(entries)
+
     if author_filter:
         visible = [
-            e for e in entries
+            e for e in visible
             if _author_matches(_get(e, 'author', 'editor'), author_filter)
         ]
-    else:
-        visible = list(entries)
+
+    if lab_filter:
+        wanted = {lab_filter} if isinstance(lab_filter, str) else set(lab_filter)
+        visible = [e for e in visible if _get(e, 'lab') in wanted]
 
     # Drop draft entries
     visible = [e for e in visible if _get(e, 'year').lower() != 'draft']
