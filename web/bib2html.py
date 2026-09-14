@@ -70,6 +70,39 @@ _VIDEO_PATTERNS = (
 # 1.  Loading
 # ---------------------------------------------------------------------------
 
+def _alias_string_case(text: str) -> str:
+    """
+    Add case-variant aliases for every @string macro defined in `text`.
+
+    BibTeX treats abbreviation names case-insensitively, but the parser does
+    not: `@string{CL = "Computational Linguistics"}` leaves a `journal = cl`
+    reference unresolved, so the page shows a bare "cl". Rather than edit the
+    bibliography, define the missing case variants for the parse only. The
+    alias carries the literal value, since a @string pointing at another
+    @string is not resolved transitively.
+    """
+    defined = {m.group(1) for m in
+               re.finditer(r'@string\s*[{(]\s*([A-Za-z0-9_+.\-]+)\s*=', text, re.IGNORECASE)}
+    wanted = {v for name in defined for v in (name.lower(), name.upper())} - defined
+    if not wanted:
+        return text
+
+    values = {sd.key: sd.value for sd in bibtexparser.parse_string(text).strings}
+    aliases = []
+    for name in sorted(defined):
+        for variant in (name.lower(), name.upper()):
+            if variant in defined or variant in {a[0] for a in aliases}:
+                continue
+            value = values.get(name)
+            if value is None:
+                continue
+            aliases.append((variant, value))
+    if not aliases:
+        return text
+    block = "\n".join(f'@string{{{k} = {{{v}}}}}' for k, v in aliases)
+    return f"{text}\n{block}\n"
+
+
 def load_bibliography(*bib_paths: str) -> list[dict]:
     """
     Parse one or more .bib files (pass the abbreviation file first).
@@ -81,6 +114,8 @@ def load_bibliography(*bib_paths: str) -> list[dict]:
     combined = '\n'.join(
         Path(p).read_text(encoding='utf-8', errors='replace') for p in bib_paths
     )
+
+    combined = _alias_string_case(combined)
 
     # The default parse stack already includes ResolveStringReferencesMiddleware
     # and RemoveEnclosingMiddleware; append the extra transforms we need.
