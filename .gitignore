@@ -185,3 +185,23 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Local-only working material, not part of the site build.
+# Paths are anchored to the repo root so they cannot match anything nested.
+# (.gitignore has no trailing comments -- each note goes on its own line.)
+
+# Pre-symlink working copies of the bib; web/static/bib now symlinks to
+# ~/git/bunko/bib, so these are stale.
+/newbib/
+
+# Output of an earlier version of the site.
+/olddocs/
+
+# Stray wget mirror artifact.
+/www3.ntu.edu.sg/
+
+# One-off bibliography dedup script, kept locally for reference.
+/dedup_bib.py
+
+# Logo source, not referenced by the site.
+/logo/
