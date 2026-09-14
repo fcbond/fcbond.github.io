@@ -81,13 +81,10 @@ def _alias_string_case(text: str) -> str:
     alias carries the literal value, since a @string pointing at another
     @string is not resolved transitively.
     """
-    defined = {m.group(1) for m in
-               re.finditer(r'@string\s*[{(]\s*([A-Za-z0-9_+.\-]+)\s*=', text, re.IGNORECASE)}
-    wanted = {v for name in defined for v in (name.lower(), name.upper())} - defined
-    if not wanted:
-        return text
-
+    # Names may contain ':' (LREC:00, lrec:06), so match on the parsed keys
+    # rather than a pattern that would truncate them at the colon.
     values = {sd.key: sd.value for sd in bibtexparser.parse_string(text).strings}
+    defined = set(values)
     aliases = []
     for name in sorted(defined):
         for variant in (name.lower(), name.upper()):
