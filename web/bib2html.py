@@ -65,6 +65,13 @@ _VIDEO_PATTERNS = (
     'channelnewsasia.com/news/video-on-demand',
 )
 
+# Status words marking a paper that was never published. Such entries stay in
+# the bib as a private reminder but must not reach the web. Matched in note and
+# pages, where the bib records them, e.g. note = {(Special Issue ..., submitted)}.
+# '(to appear)' is deliberately absent: an accepted paper is shown.
+_UNPUBLISHED_RE = re.compile(
+    r'\b(submitted|in preparation|under review)\b', re.IGNORECASE)
+
 
 # ---------------------------------------------------------------------------
 # 1.  Loading
@@ -202,6 +209,13 @@ def _get(entry: dict, *keys: str, default: str = '') -> str:
         if v:
             return v
     return default
+
+
+def _is_unpublished(entry: dict) -> bool:
+    """Return True for a draft, or a paper marked submitted / in preparation."""
+    if _get(entry, 'year').lower() == 'draft':
+        return True
+    return any(_UNPUBLISHED_RE.search(_get(entry, f)) for f in ('note', 'pages'))
 
 
 def _live_url(entry: dict) -> str:
@@ -481,8 +495,8 @@ def render_bibliography(
         wanted = {lab_filter} if isinstance(lab_filter, str) else set(lab_filter)
         visible = [e for e in visible if _get(e, 'lab') in wanted]
 
-    # Drop draft entries
-    visible = [e for e in visible if _get(e, 'year').lower() != 'draft']
+    # Drop drafts and papers that were submitted but never published
+    visible = [e for e in visible if not _is_unpublished(e)]
 
     # Group by year
     by_year: dict[str, list[dict]] = defaultdict(list)
